@@ -1,4 +1,3 @@
-[ibmdemo@RHEL7WAS1 ~]$ cat bmdemo@RHEL7WAS1 ~]$ vi /usr/IBM/scripts/lab_WSAcommands.txt
 # Set the WSA endpoint to the IP address provided by the lab provider
 /usr/IBM/scripts/lab_setWSA_IP.sh <IP-ADDRESS>
 
@@ -49,7 +48,7 @@ mkdir $myWorkingDir/Liberty
 cd $myWorkingDir/Liberty
 java -jar /var/IBM/software/WAS/wlp-base-all-21.0.0.12.jar -acceptLicense /$myWorkingDir/Liberty
 
-# Configuring Liberty
+# Create a Liberty instance
 $myWorkingDir/Liberty/wlp/bin/server create libertyServer$myUserID
 
 # Configure unique Liberty Port
@@ -82,7 +81,7 @@ $WAS_HOME/bin/manageprofiles.sh -create \
    -enableAdminSecurity false
 
 # Get ports
-cat /usr/IBM/WAS855ND/profiles/WSASrv$myUserID/logs/AboutThisProfile.txt
+cat /usr/IBM/WAS855ND/profiles/WSASrv$myUserID/logs/AboutThisProfile.txt | grep SOAP
 
 # Start tWAS
 /usr/IBM/WAS855ND/profiles/WSASrv$myUserID/bin/startServer.sh twasServer$myUserID
@@ -118,7 +117,7 @@ $myWorkingDir/Liberty/wlp/bin/server start libertyServer$myUserID
 
 # Apply fix to tWAS
 # Via script:
-/usr/IBM/scripts/was_applyFixes.sh
+/usr/IBM/scripts/lab_was_applyFixes.sh
 # Manually
 export fixID="8.5.5.5-WS-WAS-IFPH36923"
 export fixRepo="8.5.5.5-ws-was-ifph36923.zip"
