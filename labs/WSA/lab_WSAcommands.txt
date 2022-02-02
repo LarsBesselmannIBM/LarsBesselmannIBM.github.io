@@ -3,7 +3,7 @@ If you want to copy it  to your local system, use
 curl https://larsbesselmannibm.github.io/labs/WSA/lab_WSAcommands.txt > ~/Desktop/lab_WSAcommands.txt
 
 # Set the WSA endpoint to the IP address provided by the lab provider
-/usr/IBM/scripts/lab_setWSA_IP.sh <IP-ADDRESS>
+/usr/IBM/labs/WSA/setWSA_IP.sh <IP-ADDRESS>
 
 # Create your working directory
 export myUserID=XX
@@ -20,7 +20,7 @@ WSA credentials: admin/JnarVX84CKz3bAWWqrtjXHF4N3M3UwiW
 
 # Getting configuration Parameters
 
-# /usr/IBM/scripts/lab_retrieveWSADetails.sh
+# /usr/IBM/labs/WSA/retrieveWSADetails.sh
 echo "******** Retrieve WSA Details ********"
 mkdir $myWorkingDir/WSA
 cd $myWorkingDir/WSA
@@ -109,7 +109,7 @@ cat $myWorkingDir/Liberty/wlp/usr/servers/libertyServer$myUserID/logs/messages.l
 
 # Apply fix to Liberty
 # Via script:
-/usr/IBM/scripts/lab_wlp_applyFix.sh
+/usr/IBM/labs/WSA/wlp_applyFix.sh
 # Manually
 echo "Apply Fix"
 $myWorkingDir/Liberty/wlp/bin/server stop libertyServer$myUserID
@@ -121,7 +121,7 @@ $myWorkingDir/Liberty/wlp/bin/server start libertyServer$myUserID
 
 # Apply fix to tWAS
 # Via script:
-/usr/IBM/scripts/lab_was_applyFixes.sh
+/usr/IBM/labs/WSA/was_applyFixes.sh
 # Manually
 export fixID="8.5.5.5-WS-WAS-IFPH36923"
 export fixRepo="8.5.5.5-ws-was-ifph36923.zip"
@@ -139,7 +139,7 @@ $WAS855ND_PROFILE/bin/startServer.sh twasServer$myUserID
 
 # Remove fix from Liberty
 # Via script:
-/usr/IBM/scripts/lab_wlp_removeFix.sh
+/usr/IBM/labs/WSA/wlp_removeFix.sh
 # Manually
 # Stop Server
 $myWorkingDir/Liberty/wlp/bin/server stop libertyServer$myUserID
@@ -153,8 +153,7 @@ $myWorkingDir/Liberty/wlp/bin/server start libertyServer$myUserID
 
 # Remove fix from tWAS
 # Via script:
-/usr/IBM/scripts/lab_was_removeFixes.sh
-
+/usr/IBM/labs/WSA/was_removeFixes.sh
 
 
 # Cleanup:
