@@ -100,7 +100,7 @@ cd /usr/IBM/WAS855ND/profiles/WSASrv$myUserID/bin
 gedit $myWorkingDir/Liberty/wlp/usr/servers/libertyServer$myUserID/server.xml
         <feature>jaxws-2.2</feature>
 
-cat $myWorkingDir/Liberty/wlp/usr/servers/libertyServer$myUser/logs/messages.log
+cat $myWorkingDir/Liberty/wlp/usr/servers/libertyServer$myUserID/logs/messages.log
 
 
 # Apply fix to Liberty
