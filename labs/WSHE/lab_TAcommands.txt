@@ -16,7 +16,7 @@ cd /var/IBM/temp/TA_collector/
 tar -zxvf /home/ibmdemo/Downloads/transformationadvisor-Linux_WASenv1.tgz
 
 echo "Run Collector"
-cd /usr/IBM/TA_collector/transformationadvisor-2.5.0
+cd /var/IBM/temp/TA_collector/transformationadvisor-2.5.0
 export JAVA_HOME=/usr/IBM/WAS855ND/java/
 bin/transformationadvisor --help
 
