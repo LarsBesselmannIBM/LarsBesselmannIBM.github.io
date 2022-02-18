@@ -11,8 +11,8 @@ echo "Start WAS instance"
 WASenv1 StandaloneServer1
 
 # Extract collector
-mkdir /usr/IBM/TA_collector/
-cd /usr/IBM/TA_collector/
+mkdir /var/IBM/temp/TA_collector/
+cd /var/IBM/temp/TA_collector/
 tar -zxvf /home/ibmdemo/Downloads/transformationadvisor-Linux_WASenv1.tgz
 
 echo "Run Collector"
