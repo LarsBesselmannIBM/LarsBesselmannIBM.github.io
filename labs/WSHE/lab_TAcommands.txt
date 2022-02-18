@@ -10,8 +10,7 @@ echo "Start WAS instance"
 # Create TA workspace
 WASenv1 StandaloneServer1
 
-# /usr/IBM/scripts/unzipCollector.sh
-echo "Extract collector"
+# Extract collector
 mkdir /usr/IBM/TA_collector/
 cd /usr/IBM/TA_collector/
 tar -zxvf /home/ibmdemo/Downloads/transformationadvisor-Linux_WASenv1.tgz
