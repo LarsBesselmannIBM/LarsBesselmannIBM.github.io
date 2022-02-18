@@ -14,7 +14,7 @@ WASenv1 StandaloneServer1
 echo "Extract collector"
 mkdir /usr/IBM/TA_collector/
 cd /usr/IBM/TA_collector/
-tar -zxvf /home/ibmdemo/Downloads/transformationadvisor-Linux_WASenv1_StandaloneServer1.tgz
+tar -zxvf /home/ibmdemo/Downloads/transformationadvisor-Linux_WASenv1.tgz
 
 echo "Run Collector"
 cd /usr/IBM/TA_collector/transformationadvisor-2.5.0
