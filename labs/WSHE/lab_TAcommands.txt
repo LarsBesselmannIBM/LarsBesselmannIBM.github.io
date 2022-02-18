@@ -15,8 +15,8 @@ mkdir /var/IBM/temp/TA_collector/
 cd /var/IBM/temp/TA_collector/
 tar -zxvf /home/ibmdemo/Downloads/transformationadvisor-Linux_WASenv1.tgz
 
-echo "Run Collector"
-cd /var/IBM/temp/TA_collector/transformationadvisor-2.5.0
+# Run Collector
+cd /var/IBM/temp/TA_collector/transformationadvisor-3.0.0
 export JAVA_HOME=/usr/IBM/WAS855ND/java/
 bin/transformationadvisor --help
 
@@ -27,14 +27,14 @@ echo "Stop WAS instance"
 /usr/IBM/WAS855ND/profiles/StandaloneSrv1/bin/stopServer.sh server1
 
 
-# /usr/IBM/scripts/buildLiberty.sh
+# Build Liberty Instance
 echo "Build Liberty with modresorts"
 mkdir /var/IBM/temp/modLiberty
 cd /var/IBM/temp/modLiberty
 echo "Install liberty via archive"
 java -jar /var/IBM/software/WAS/wlp-base-all-21.0.0.3.jar
 
-echo "Extract migration bundle"
+# Extract migration bundle
 unzip /home/ibmdemo/Downloads/modresorts_migrationBundle.zip
 echo "Create Liberty instance"
 wlp/bin/server create modServer
