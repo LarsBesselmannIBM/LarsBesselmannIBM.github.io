@@ -1,4 +1,4 @@
-The latest version of the WSA commands are available at https://larsbesselmannibm.github.io/labs/WSHE/lab_TAcommands.txt
+The latest version of the TA commands are available at https://larsbesselmannibm.github.io/labs/WSHE/lab_TAcommands.txt
 If you want to copy it to your local system, use 
 curl https://larsbesselmannibm.github.io/labs/WSA/lab_TAcommands.txt > ~/Desktop/lab_TAcommands.txt
 
