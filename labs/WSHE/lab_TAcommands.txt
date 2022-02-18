@@ -1,22 +1,21 @@
 The latest version of the TA commands are available at https://larsbesselmannibm.github.io/labs/WSHE/lab_TAcommands.txt
 If you want to copy it to your local system, use 
-curl https://larsbesselmannibm.github.io/labs/WSA/lab_TAcommands.txt > ~/Desktop/lab_TAcommands.txt
+curl https://larsbesselmannibm.github.io/labs/WSA/lab_TAcommands.txt > /home/ibmdemo/temp/lab_TAcommands.txt
 
 
 # /usr/IBM/scripts/tWASstart.sh
 echo "Start WAS instance"
 /usr/IBM/WAS855ND/profiles/StandaloneSrv1/bin/startServer.sh server1
 
-# Create TA workspace
-WASenv1 StandaloneServer1
+# Create TA workspace with name WASenv1
 
 # Extract collector
-mkdir /var/IBM/temp/TA_collector/
-cd /var/IBM/temp/TA_collector/
+mkdir -p /home/ibmdemo/temp/TA_collector/
+cd /home/ibmdemo/temp/TA_collector/
 tar -zxvf /home/ibmdemo/Downloads/transformationadvisor-Linux_WASenv1.tgz
 
 # Run Collector
-cd /var/IBM/temp/TA_collector/transformationadvisor-3.0.0
+cd /home/ibmdemo/temp/TA_collector/transformationadvisor-3.0.0
 export JAVA_HOME=/usr/IBM/WAS855ND/java/
 bin/transformationadvisor --help
 
