@@ -53,6 +53,4 @@ rm  ~/Downloads/*
 rm -rf /var/IBM/temp/*
 docker rm modresorts
 docker rmi modresorts:latest
-rm -rf /usr/IBM/TA_collector
-# Remove collection from TA GUI
 
