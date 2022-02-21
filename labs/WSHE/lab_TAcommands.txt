@@ -3,7 +3,6 @@ If you want to copy it to your local system, use
 curl https://larsbesselmannibm.github.io/labs/WSA/lab_TAcommands.txt > /var/IBM/temp/lab_TAcommands.txt
 
 # Start tWAS
-echo "Start WAS instance"
 /usr/IBM/WAS855ND/profiles/StandaloneSrv1/bin/startServer.sh server1
 
 # Create TA workspace with name WASenv1
