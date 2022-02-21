@@ -21,15 +21,13 @@ bin/transformationadvisor --help
 bin/transformationadvisor -w /usr/IBM/WAS855ND/ -p StandaloneSrv1
 
 # Stop tWAS
-echo "Stop WAS instance"
 /usr/IBM/WAS855ND/profiles/StandaloneSrv1/bin/stopServer.sh server1
 
-# Build Liberty Instance
-echo "Build Liberty with modresorts"
+# Build Liberty Instance with modresorts
 mkdir /var/IBM/temp/modLiberty
 cd /var/IBM/temp/modLiberty
 echo "Install liberty via archive"
-java -jar /var/IBM/software/WAS/wlp-base-all-21.0.0.3.jar
+java -jar /var/IBM/software/WAS/wlp-base-all-21.0.0.12.jar --acceptLicense .
 
 # Extract migration bundle
 unzip /home/ibmdemo/Downloads/modresorts_migrationBundle.zip
