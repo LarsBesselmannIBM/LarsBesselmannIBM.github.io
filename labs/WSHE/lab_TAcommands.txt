@@ -28,9 +28,6 @@ cd /var/IBM/temp/modLiberty
 # Install liberty via archive
 java -jar /var/IBM/software/WAS/wlp-base-all-21.0.0.12.jar --acceptLicense .
 
-# Access the modresorts application via URL localhost:9080/resorts
-firefox localhost:9080/resorts
-
 # Extract migration bundle
 unzip /home/ibmdemo/Downloads/modresorts_migrationBundle.zip
 # Create Liberty instance
@@ -39,9 +36,12 @@ wlp/bin/server create modServer
 # Copy application war and Liberty configuration from migration bundle
 cp src/main/liberty/config/server.xml wlp/usr/servers/modServer/
 cp target/modresorts-1.0.war wlp/usr/servers/modServer/dropins/
+
 # Start Liberty instance
 wlp/bin/server run modServer
 
+# Access the modresorts application via URL localhost:9080/resorts
+firefox localhost:9080/resorts
 
 # Create a Liberty container
 cd /var/IBM/temp/modLiberty
