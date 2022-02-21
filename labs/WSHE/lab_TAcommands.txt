@@ -41,7 +41,6 @@ cp target/modresorts-1.0.war wlp/usr/servers/modServer/dropins/
 wlp/bin/server run modServer
 
 # Access the modresorts application via URL localhost:9080/resorts
-firefox localhost:9080/resorts
 
 # Create a Liberty container
 cd /var/IBM/temp/modLiberty
