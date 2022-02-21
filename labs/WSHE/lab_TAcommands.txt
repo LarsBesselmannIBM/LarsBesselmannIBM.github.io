@@ -1,30 +1,28 @@
 The latest version of the TA commands are available at https://larsbesselmannibm.github.io/labs/WSHE/lab_TAcommands.txt
 If you want to copy it to your local system, use 
-curl https://larsbesselmannibm.github.io/labs/WSA/lab_TAcommands.txt > /home/ibmdemo/temp/lab_TAcommands.txt
+curl https://larsbesselmannibm.github.io/labs/WSA/lab_TAcommands.txt > /var/IBM/temp/lab_TAcommands.txt
 
-
-# /usr/IBM/scripts/tWASstart.sh
+# Start tWAS
 echo "Start WAS instance"
 /usr/IBM/WAS855ND/profiles/StandaloneSrv1/bin/startServer.sh server1
 
 # Create TA workspace with name WASenv1
 
 # Extract collector
-mkdir -p /home/ibmdemo/temp/TA_collector/
-cd /home/ibmdemo/temp/TA_collector/
+mkdir -p /var/IBM/temp/TA_collector/
+cd /var/IBM/temp/TA_collector/
 tar -zxvf /home/ibmdemo/Downloads/transformationadvisor-Linux_WASenv1.tgz
 
 # Run Collector
-cd /home/ibmdemo/temp/TA_collector/transformationadvisor-3.0.0
+cd /var/IBM/temp/TA_collector/transformationadvisor-3.0.0
 export JAVA_HOME=/usr/IBM/WAS855ND/java/
 bin/transformationadvisor --help
 
 bin/transformationadvisor -w /usr/IBM/WAS855ND/ -p StandaloneSrv1
 
-# /usr/IBM/scripts/tWASstop.sh
+# Stop tWAS
 echo "Stop WAS instance"
 /usr/IBM/WAS855ND/profiles/StandaloneSrv1/bin/stopServer.sh server1
-
 
 # Build Liberty Instance
 echo "Build Liberty with modresorts"
@@ -38,9 +36,9 @@ unzip /home/ibmdemo/Downloads/modresorts_migrationBundle.zip
 echo "Create Liberty instance"
 wlp/bin/server create modServer
 
-echo "Copy application war and Liberty configuration from migration bundle"
+# Copy application war and Liberty configuration from migration bundle
 cp src/main/liberty/config/server.xml wlp/usr/servers/modServer/
-cp  target/modresorts-1.0.war wlp/usr/servers/modServer/dropins/
+cp target/modresorts-1.0.war wlp/usr/servers/modServer/dropins/
 echo "Start Liberty instance"
 wlp/bin/server run modServer
 
