@@ -1,6 +1,6 @@
 The latest version of the TA commands are available at https://larsbesselmannibm.github.io/labs/WSHE/lab_TAcommands.txt
 If you want to copy it to your local system, use 
-curl https://larsbesselmannibm.github.io/labs/WSA/lab_TAcommands.txt > /var/IBM/temp/lab_TAcommands.txt
+curl https://larsbesselmannibm.github.io/labs/WSHE/lab_TAcommands.txt > /var/IBM/temp/lab_TAcommands.txt
 
 # Start tWAS
 /usr/IBM/WAS855ND/profiles/StandaloneSrv1/bin/startServer.sh server1
@@ -47,4 +47,12 @@ cd /var/IBM/temp/modLiberty
 docker build -t modresorts .
 docker run --name modresorts -p 9080:9080 modresorts:latest
 
+# Clean up
+# Remove TA collection from the download directory
+rm  ~/Downloads/*
+rm -rf /var/IBM/temp/*
+docker rm modresorts
+docker rmi modresorts:latest
+rm -rf /usr/IBM/TA_collector
+# Remove collection from TA GUI
 
