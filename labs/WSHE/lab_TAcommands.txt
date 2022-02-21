@@ -35,7 +35,7 @@ wlp/bin/server create modServer
 
 # Copy application war and Liberty configuration from migration bundle
 cp src/main/liberty/config/server.xml wlp/usr/servers/modServer/
-cp target/modresorts-1.0.war wlp/usr/servers/modServer/dropins/
+cp target/modresorts-1.0.war wlp/usr/servers/modServer/apps/
 
 # Start Liberty instance
 wlp/bin/server run modServer
