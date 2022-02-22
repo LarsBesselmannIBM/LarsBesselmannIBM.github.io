@@ -1,0 +1,158 @@
+echo "Clone the GitHub repository"
+cd /var/IBM/temp
+git clone https://github.com/kpostreich/m2m-ws-sample
+cd /var/IBM/temp/m2m-ws-sample
+ls -l
+
+docker pull ibmcom/mono2micro-bluejay
+docker pull ibmcom/mono2micro-aipl
+docker pull ibmcom/mono2micro-ui:21.0.09.0
+docker pull ibmcom/mono2micro-cardinal
+
+docker images | grep ibmcom
+
+cd /var/IBM/temp/m2m-ws-sample
+docker run --rm -it -e LICENSE=accept -v /var/IBM/temp/m2m-ws-sample/:/var/application ibmcom/mono2micro-bluejay /var/application/defaultapplication/monolith out
+
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-klu
+ls -al
+
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-klu/DefaultWebApplication/src/main/java
+gedit /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-klu/DefaultWebApplication/src/main/java/HitCount.java
+
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication
+sudo chmod -R 777 ./monolith-klu
+
+# Build the application
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-klu
+mvn clean install
+
+/var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-klu/DefaultApplication-ear/target/liberty/wlp/bin/server start DefaultApplicationServer
+/var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-klu/DefaultApplication-ear/target/liberty/wlp/bin/server status DefaultApplicationServer
+
+http://localhost:9080
+
+# Run Flicker
+cd /var/IBM/temp/m2m-ws-sample/Flicker
+java -cp commons-net-3.6.jar:json-simple-1.1.jar:. Flicker -no_ntp
+
+# Stop the Liberty instance
+/var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-klu/DefaultApplication-ear/target/liberty/wlp/bin/server stop DefaultApplicationServer
+
+cd /var/IBM/temp/m2m-ws-sample/Flicker
+ls *.json
+cat context*.json
+
+cat /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-klu/DefaultApplication-ear/target/liberty/wlp/usr/servers/DefaultApplicationServer/logs/messages.log
+
+# Chapter 2.6
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data/ 
+ls -R
+
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data
+
+docker run --rm -it -e LICENSE=accept -v /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data:/var/application ibmcom/mono2micro-aipl
+
+ls /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data/mono2micro/mono2micro-output/
+
+
+docker run -d -e LICENSE=accept -p 3005:3000 --name=m2mgui ibmcom/mono2micro-ui:21.0.09.0
+
+http://localhost:3005/
+
+
+# Chapter 2.7
+
+cp /home/ibmdemo/Downloads/final_graph.json /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data/custom_graph.json 
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data
+ls -l 
+
+sudo chmod 777 ./config.ini 
+
+gedit ./config.ini
+
+custom_graph.json
+
+docker run --rm -it -e LICENSE=accept -v /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data:/var/application ibmcom/mono2micro-aipl regen_p
+
+ls -l /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data/mono2micro/mono2micro-user-modified
+
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data/mono2micro/mono2micro-user-modified
+
+firefox ./Cardinal-Report-Modified.html
+
+# Part 3
+
+docker run --rm -it -e LICENSE=accept -v /var/IBM/temp/m2m-ws-sample/defaultapplication:/var/application ibmcom/mono2micro-cardinal /var/application/monolith /var/application/mono2micro-analysis-custom/cardinal
+
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication/mono2micro-analysis-custom/cardinal/cardinal-codegen
+cat CardinalFileSummary.txt
+
+# Chapter 3.4
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication/scripts
+gedit moveResourcesToPartitions.sh
+"/var/IBM/temp/m2m-ws-sample"
+./moveResourcesToPartitions.sh
+
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-web/
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-partition0/
+
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication/scripts
+gedit ./refactorPartitions.sh
+"/var/IBM/temp/m2m-ws-sample"
+./refactorPartitions.sh
+
+
+cat /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-web/Dockerfile
+
+cat /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-partition0/Dockerfile
+
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-web
+mvn clean install
+
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-partition0
+mvn clean install
+
+
+docker network create defaultappNetwork
+docker network list
+
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication/microservices/defaultapp-web
+
+docker build -t defaultapp-web  . | tee web.out
+
+docker run --name=defaultapp-web --hostname=defaultapp-web --network=defaultappNetwork -d -p 9095:9080 defaultapp-web:latest
+docker ps 
+
+cd /var/IBM/temp/m2m-ws-sample/defaultapplication/microservices/defaultapp-partition0
+docker build -t defaultapp-partition0 . | tee partition0.out
+
+docker run --name=defaultapp-partition0 --hostname=defaultapp-partition0 --network=defaultappNetwork -d -p 9096:9080 defaultapp-partition0:latest
+docker ps
+
+docker inspect defaultappNetwork
+
+docker logs defaultapp-web
+
+docker logs defaultapp-partition0
+
+http://localhost:9095/
+Username: user1
+Password: change1me
+
+
+docker logs defaultapp-web
+docker logs defaultapp-partition0
+
+
+docker stop defaultapp-web
+docker stop defaultapp-partition0
+
+docker rm defaultapp-web
+docker rm defaultapp-partition0
+docker rmi defaultapp-web
+docker rmi defaultapp-partition0
+
+
+# Troubleshooting
+export JAVA_HOME=/usr/IBM/jdk8u312-b07/
