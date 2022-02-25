@@ -203,6 +203,7 @@ docker network rm defaultappNetwork
 docker stop m2mgui
 docker rm m2mgui
 
+cd /var/IBM/temp
 sudo rm -rf /var/IBM/temp/m2m-ws-sample
 
 # Troubleshooting
