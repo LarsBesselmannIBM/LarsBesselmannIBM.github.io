@@ -198,8 +198,11 @@ docker rm defaultapp-partition0
 docker rmi defaultapp-web
 docker rmi defaultapp-partition0
 
+docker network rm defaultappNetwork
+
 docker stop m2mgui
 docker rm m2mgui
+
 
 # Troubleshooting
 export JAVA_HOME=/usr/IBM/jdk8u312-b07/
