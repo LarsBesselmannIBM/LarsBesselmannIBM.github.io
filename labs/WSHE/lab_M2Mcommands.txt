@@ -203,7 +203,10 @@ docker network rm defaultappNetwork
 docker stop m2mgui
 docker rm m2mgui
 
+sudo rm -rf /var/IBM/temp/m2m-ws-sample
 
 # Troubleshooting
 export JAVA_HOME=/usr/IBM/jdk8u312-b07/
+
+
 
