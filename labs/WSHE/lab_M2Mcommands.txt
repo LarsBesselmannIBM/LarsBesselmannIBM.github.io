@@ -109,65 +109,86 @@ firefox ./Cardinal-Report-Modified.html
 # Run Cardinal code generation tool 
 docker run --rm -it -e LICENSE=accept -v /var/IBM/temp/m2m-ws-sample/defaultapplication:/var/application ibmcom/mono2micro-cardinal /var/application/monolith /var/application/mono2micro-analysis-custom/cardinal
 
+#  Open the CardinalFileSummary.txt 
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/mono2micro-analysis-custom/cardinal/cardinal-codegen
 cat CardinalFileSummary.txt
 
-# Chapter 3.4
+# Refactoring Non-Java parts and more
+
+# Review and adjust the moveResourcesToPartitions.sh shell script. It will speed up copying files.
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/scripts
 gedit moveResourcesToPartitions.sh
 "/var/IBM/temp/m2m-ws-sample"
+
+# Run the script to copy the non-java resources to the partitions
 ./moveResourcesToPartitions.sh
 
+# Navigate to the following directories to explore the newly added non-Java resources. 
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-web/
+ls -lrt
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-partition0/
+ls -lrt
 
+# Adjust the refactorPartitions.sh shell script to perform the partition refactoring
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/scripts
 gedit ./refactorPartitions.sh
 "/var/IBM/temp/m2m-ws-sample"
 ./refactorPartitions.sh
 
-
+# Navigate to the Dockerfile in the web partition to explore it
 cat /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-web/Dockerfile
 
+# Navigate to the Dockerfile in the partition0 partition to explore it.
 cat /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-partition0/Dockerfile
 
+# Compile the monolith-web microservice via command line
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-web
 mvn clean install
 
+# Compile the monolith-partition0 microservice via command line
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-partition0
 mvn clean install
 
+# Part 4 (Optional) Build and run the transformed microservices using Docker
 
+# Create a Docker Network for the two containers to communicate
 docker network create defaultappNetwork
 docker network list
 
+# Build the defaultapplication-web (front-end) container
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/microservices/defaultapp-web
-
 docker build -t defaultapp-web  . | tee web.out
 
+# Start the partition-web (front-end) docker container
 docker run --name=defaultapp-web --hostname=defaultapp-web --network=defaultappNetwork -d -p 9095:9080 defaultapp-web:latest
 docker ps 
 
+# Build the defaultapplication-partition0 (back-end) container
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/microservices/defaultapp-partition0
 docker build -t defaultapp-partition0 . | tee partition0.out
 
+# Start the partition-partition0 (back-end) docker container
 docker run --name=defaultapp-partition0 --hostname=defaultapp-partition0 --network=defaultappNetwork -d -p 9096:9080 defaultapp-partition0:latest
 docker ps
 
+# Inspect Docker’s defaultappNetwork and ensure both microservices are joined in the network
 docker inspect defaultappNetwork
 
+# View the Open Liberty Server logs for the microservices
 docker logs defaultapp-web
-
 docker logs defaultapp-partition0
 
+# Access the application
 http://localhost:9095/
 Username: user1
 Password: change1me
 
-
+# View the server logs from both microservices
 docker logs defaultapp-web
 docker logs defaultapp-partition0
 
+
+# Cleanup
 
 docker stop defaultapp-web
 docker stop defaultapp-partition0
@@ -177,10 +198,9 @@ docker rm defaultapp-partition0
 docker rmi defaultapp-web
 docker rmi defaultapp-partition0
 
+docker stop m2mgui
+docker rm m2mgui
 
 # Troubleshooting
 export JAVA_HOME=/usr/IBM/jdk8u312-b07/
 
-Cleanup:
-docker stop m2mgui
-docker rm m2mgui
