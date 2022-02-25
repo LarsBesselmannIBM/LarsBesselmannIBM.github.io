@@ -1,63 +1,86 @@
-echo "Clone the GitHub repository"
+The latest version of the lab_M2Mcommands file is available at https://larsbesselmannibm.github.io/labs/WSHE/lab_M2Mcommands.txt
+If you want to copy it to your local system, use 
+curl https://larsbesselmannibm.github.io/labs/WSHE/lab_M2Mcommands.txt > /var/IBM/temp/lab_M2Mcommands.txt
+
+# Part 1- Introduction to the Application and resources used for this lab
+
+# Clone the GitHub repository used for this Mono2Micro lab   
 cd /var/IBM/temp
 git clone https://github.com/kpostreich/m2m-ws-sample
+
 cd /var/IBM/temp/m2m-ws-sample
 ls -l
 
+# Part 2 - Use Mono2Micro to get microservices partition recommendations
+
+# Download all the Mono2Micro images by issuing the docker pull commands: 
 docker pull ibmcom/mono2micro-bluejay
 docker pull ibmcom/mono2micro-aipl
 docker pull ibmcom/mono2micro-ui:21.0.09.0
 docker pull ibmcom/mono2micro-cardinal
 
+# List the docker images. You should see the four images listed
 docker images | grep ibmcom
 
+# Run the Bluejay analysis using the following commands:
 cd /var/IBM/temp/m2m-ws-sample
 docker run --rm -it -e LICENSE=accept -v /var/IBM/temp/m2m-ws-sample/:/var/application ibmcom/mono2micro-bluejay /var/application/defaultapplication/monolith out
 
+# Review the output from Bluejay: 
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-klu
 ls -al
 
+# Look at an example of the instrumentation in the monolith code.  
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-klu/DefaultWebApplication/src/main/java
 gedit /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-klu/DefaultWebApplication/src/main/java/HitCount.java
 
+# Change the permissions on monolith-klu directory
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication
 sudo chmod -R 777 ./monolith-klu
 
-# Build the application
+# Build and package the instrumented version of the DefaultApplication  
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-klu
 mvn clean install
 
+# Start the Liberty server and check that the server is in the running state
 /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-klu/DefaultApplication-ear/target/liberty/wlp/bin/server start DefaultApplicationServer
 /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-klu/DefaultApplication-ear/target/liberty/wlp/bin/server status DefaultApplicationServer
 
+# Access the default application
 http://localhost:9080
 
 # Run Flicker
 cd /var/IBM/temp/m2m-ws-sample/Flicker
 java -cp commons-net-3.6.jar:json-simple-1.1.jar:. Flicker -no_ntp
 
-# Stop the Liberty instance
+# Stop the Liberty server
 /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-klu/DefaultApplication-ear/target/liberty/wlp/bin/server stop DefaultApplicationServer
 
+# Take a look at the context file
 cd /var/IBM/temp/m2m-ws-sample/Flicker
 ls *.json
 cat context*.json
 
+# View the Liberty log file
 cat /var/IBM/temp/m2m-ws-sample/defaultapplication/monolith-klu/DefaultApplication-ear/target/liberty/wlp/usr/servers/DefaultApplicationServer/logs/messages.log
 
-# Chapter 2.6
+# Prepare the input directories for running the AIPL tool 
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data/ 
 ls -R
 
+# Run the AIPL tool to generate the microservices recommendations 
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data
-
 docker run --rm -it -e LICENSE=accept -v /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data:/var/application ibmcom/mono2micro-aipl
 
+# List the generated files 
 ls /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data/mono2micro/mono2micro-output/
 
-
+#  Launch the Mono2Micro UI
 docker run -d -e LICENSE=accept -p 3005:3000 --name=m2mgui ibmcom/mono2micro-ui:21.0.09.0
+# If you encounter an error like “The container name /m2mgui is already in use”, then start the existing container.
+docker start m2mgui
 
+# Access the M2M UI 
 http://localhost:3005/
 
 
