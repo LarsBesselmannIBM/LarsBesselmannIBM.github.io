@@ -84,28 +84,29 @@ docker start m2mgui
 http://localhost:3005/
 
 
-# Chapter 2.7
-
+# Regenerate the partition recommendations by rerunning AIPL against the customized graph
 cp /home/ibmdemo/Downloads/final_graph.json /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data/custom_graph.json 
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data
 ls -l 
 
+# Adjust the file config.ini
 sudo chmod 777 ./config.ini 
-
 gedit ./config.ini
-
 custom_graph.json
 
+# Rerun the AIPL tool with the regen_p option to generate the partitioning recommendations 
 docker run --rm -it -e LICENSE=accept -v /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data:/var/application ibmcom/mono2micro-aipl regen_p
 
+# List the files / folders of the generated directory
 ls -l /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data/mono2micro/mono2micro-user-modified
 
+# View the generated Cardinal report to verify the partitions and exposed services are defined as expected
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/application-data/mono2micro/mono2micro-user-modified
-
 firefox ./Cardinal-Report-Modified.html
 
-# Part 3
+# Part 3 - Generating Initial Microservices Foundation Code
 
+# Run Cardinal code generation tool 
 docker run --rm -it -e LICENSE=accept -v /var/IBM/temp/m2m-ws-sample/defaultapplication:/var/application ibmcom/mono2micro-cardinal /var/application/monolith /var/application/mono2micro-analysis-custom/cardinal
 
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/mono2micro-analysis-custom/cardinal/cardinal-codegen
@@ -179,3 +180,7 @@ docker rmi defaultapp-partition0
 
 # Troubleshooting
 export JAVA_HOME=/usr/IBM/jdk8u312-b07/
+
+Cleanup:
+docker stop m2mgui
+docker rm m2mgui
