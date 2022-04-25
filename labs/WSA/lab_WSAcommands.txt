@@ -25,9 +25,11 @@ echo "******** Retrieve WSA Details ********"
 mkdir /var/IBM/temp/WSA
 cd /var/IBM/temp/WSA
 
+# Log into OpenShift and switch to the project websphere-automation
 oc login -s api.apps.ocp46.tec.uk.ibm.com:6443 -u admin -p passw0rd --insecure-skip-tls-verify=true
 oc project websphere-automation
-# Meetering API
+
+# Metering API
 echo "******** Retrieve WSA metering URL ********"
 oc get route cpd -o jsonpath=https://{.spec.host}/websphereauto/meteringapi > WSA_metering_URL.txt && cat WSA_metering_URL.txt
 # API Key:
