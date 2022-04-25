@@ -15,7 +15,9 @@ echo "192.168.1.100 $newHost" | sudo tee -a /etc/hosts
 sudo hostname $newHost
 
 # Accessing the WSA UI
-https://cp-console.apps.ocp46.tec.uk.ibm.com/oidc/login.jsp
+https://cpd-websphere-automation.apps.ocp46.tec.uk.ibm.com 
+
+
 IBM provide credentials: admin/passw0rd
 WSA credentials: admin/JnarVX84CKz3bAWWqrtjXHF4N3M3UwiW
 
