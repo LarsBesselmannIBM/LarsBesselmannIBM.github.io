@@ -29,25 +29,22 @@ cd /var/IBM/temp/WSA
 oc login -s api.apps.ocp46.tec.uk.ibm.com:6443 -u admin -p passw0rd --insecure-skip-tls-verify=true
 oc project websphere-automation
 
-# Metering API
-echo "******** Retrieve WSA metering URL ********"
+# Retrieve WSA metering URL
 oc get route cpd -o jsonpath=https://{.spec.host}/websphereauto/meteringapi > WSA_metering_URL.txt && cat WSA_metering_URL.txt
-# API Key:
-echo "******** Retrieve WSA API Key ********"
+
+# Retrieve WSA API Key
 oc get secret wsa-secure-metering-apis-encrypted-tokens -o jsonpath='{.data.wsa-secure-metering-apis-sa}' | base64 -d > WSA_metering_api-key.txt && cat WSA_metering_api-key.txt && echo
-#Usage Metering Certificate
-echo "******** Retrieve WSA Metering Certificate ********"
+
+# Retrieve WSA Metering Certificate
 oc get secret external-tls-secret -o jsonpath='{.data.cert\.crt}' | base64 -d >  WSA_metering_certificate_file.pem && cat WSA_metering_certificate_file.pem
 
 # Log out
 oc logout
 
-# Create a Keystore for metering
-echo "******** Create WSA truststore ********"
+# Create WSA truststore
 keytool -import -trustcacerts -file WSA_metering_certificate_file.pem -keystore WSA_metering_Key.p12 -storetype PKCS12 -storepass meterPwd -v -trustcacerts -noprompt
 
 # List all generated assets
-echo "******** List Files with WSA Details ********"
 ls -lrt WSA_metering*
 
 #Install Liberty
