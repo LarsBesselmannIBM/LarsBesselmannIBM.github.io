@@ -97,7 +97,7 @@ cd /usr/IBM/WAS855ND/profiles/WSASrv01/bin
 ./wsadmin.sh -lang jython -conntype SOAP -port 8881 -f configuretWasUsageMetering.py url=$(cat /var/IBM/temp/WSA/WSA_metering_URL.txt) apiKey=$(cat /var/IBM/temp/WSA/WSA_metering_api-key.txt) trustStorePassword=meterPwd
 
 # Optional: Look for the registration message in the log file 
-cat /usr/IBM/WAS855ND/profiles/ WSASrv01/logs/ twasServer01/SystemOut.log
+cat /usr/IBM/WAS855ND/profiles/WSASrv01/logs/twasServer01/SystemOut.log
 
 
 # Configure a new feature for an updated application
