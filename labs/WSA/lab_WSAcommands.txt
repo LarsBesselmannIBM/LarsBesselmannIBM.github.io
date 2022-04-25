@@ -1,16 +1,15 @@
 The WSA commands are available at https://larsbesselmannibm.github.io/labs/WSA/lab_WSAcommands.txt
-If you want to copy it  to your local system, use 
+If you want to copy it to your local system, use 
 curl https://larsbesselmannibm.github.io/labs/WSA/lab_WSAcommands.txt > ~/Desktop/lab_WSAcommands.txt
 
 # Set the WSA endpoint to the IP address provided by the lab provider
-/usr/IBM/labs/WSA/setWSA_IP.sh <IP-ADDRESS>
+/usr/IBM/labs/WSA/Backup/setWSA_IP.sh <IP-ADDRESS>
 
-# Create your working directory
-export myUserID=XX
-export myWorkingDir=/var/IBM/user$myUserID
-mkdir $myWorkingDir
-cd $myWorkingDir
+# Set your UserID 
+export myUserID=<student number>
 
+# Set the hostname for the Student VM
+/usr/IBM/scripts/Backup/setWSA_student.sh $myUserID
 
 # Accessing the WSA UI
 https://cp-console.apps.ocp46.tec.uk.ibm.com/oidc/login.jsp
@@ -22,8 +21,9 @@ WSA credentials: admin/JnarVX84CKz3bAWWqrtjXHF4N3M3UwiW
 
 # /usr/IBM/labs/WSA/retrieveWSADetails.sh
 echo "******** Retrieve WSA Details ********"
-mkdir $myWorkingDir/WSA
-cd $myWorkingDir/WSA
+mkdir /var/IBM/temp/WSA
+cd /var/IBM/temp/WSA
+
 oc login -s api.apps.ocp46.tec.uk.ibm.com:6443 -u admin -p passw0rd --insecure-skip-tls-verify=true
 oc project websphere-automation
 # Meetering API
@@ -48,30 +48,27 @@ echo "******** List Files with WSA Details ********"
 ls -lrt WSA_metering*
 
 #Install Liberty
-mkdir $myWorkingDir/Liberty
-cd $myWorkingDir/Liberty
-java -jar /var/IBM/software/WAS/wlp-base-all-21.0.0.12.jar -acceptLicense /$myWorkingDir/Liberty
+mkdir /var/IBM/temp/Liberty
+cd /var/IBM/temp/Liberty
+java -jar /var/IBM/software/WAS/wlp-base-all-21.0.0.12.jar -acceptLicense //var/IBM/temp/Liberty
 
 # Create a Liberty instance
-$myWorkingDir/Liberty/wlp/bin/server create libertyServer$myUserID
+/var/IBM/temp/Liberty/wlp/bin/server create libertyServer01
 
-# Configure unique Liberty Port
-sed -i 's/9080/200'$myUserID'/g' /$myWorkingDir/Liberty/wlp/usr/servers/libertyServer$myUserID/server.xml
-sed -i 's/9443/210'$myUserID'/g' /$myWorkingDir/Liberty/wlp/usr/servers/libertyServer$myUserID/server.xml
+# Use the configDropins/defaults directory
+mkdir -p /var/IBM/temp/Liberty/wlp/usr/servers/libertyServer01/configDropins/defaults
+cp /var/IBM/software/WAS/WSA_server.xml /var/IBM/temp/Liberty/wlp/usr/servers/libertyServer01/configDropins/defaults
 
-mkdir -p $myWorkingDir/Liberty/wlp/usr/servers/libertyServer$myUserID/configDropins/defaults
-cp /var/IBM/software/WAS/WSA_server.xml $myWorkingDir/Liberty/wlp/usr/servers/libertyServer$myUserID/configDropins/defaults
+echo "WSA_metering_URL=$(cat /var/IBM/temp/WSA/WSA_metering_URL.txt)" > /var/IBM/temp/WSA/bootstrap.properties
+echo "WSA_metering_keystore=/var/IBM/temp/WSA/WSA_metering_Key.p12" >> /var/IBM/temp/WSA/bootstrap.properties
+echo "WSA_metering_api-key=$(cat /var/IBM/temp/WSA/WSA_metering_api-key.txt)" >> /var/IBM/temp/WSA/bootstrap.properties
+cat /var/IBM/temp/WSA/bootstrap.properties
 
-echo "WSA_metering_URL=$(cat $myWorkingDir/WSA/WSA_metering_URL.txt)" > $myWorkingDir/WSA/bootstrap.properties
-echo "WSA_metering_keystore=$myWorkingDir/WSA/WSA_metering_Key.p12" >> $myWorkingDir/WSA/bootstrap.properties
-echo "WSA_metering_api-key=$(cat $myWorkingDir/WSA/WSA_metering_api-key.txt)" >> $myWorkingDir/WSA/bootstrap.properties
-cat $myWorkingDir/WSA/bootstrap.properties
+echo "bootstrap.include=/var/IBM/temp/WSA/bootstrap.properties" >> /var/IBM/temp/Liberty/wlp/usr/servers/libertyServer01/bootstrap.properties
 
-echo "bootstrap.include=$myWorkingDir/WSA/bootstrap.properties" >> $myWorkingDir/Liberty/wlp/usr/servers/libertyServer$myUserID/bootstrap.properties
+/var/IBM/temp/Liberty/wlp/bin/server start libertyServer01
 
-$myWorkingDir/Liberty/wlp/bin/server start libertyServer$myUserID
-
-cat $myWorkingDir/Liberty/wlp/usr/servers/libertyServer$myUserID/logs/messages.log
+cat /var/IBM/temp/Liberty/wlp/usr/servers/libertyServer01/logs/messages.log
 
 
 
@@ -79,32 +76,32 @@ cat $myWorkingDir/Liberty/wlp/usr/servers/libertyServer$myUserID/logs/messages.l
 # Create profile for standalone WAS
 export WAS_HOME=/usr/IBM/WAS855ND
 $WAS_HOME/bin/manageprofiles.sh -create \
-   -profileName WSASrv$myUserID \
-   -serverName twasServer$myUserID      \
+   -profileName WSASrv01 \
+   -serverName twasServer01      \
    -templatePath $WAS_HOME/profileTemplates/default \
    -enableAdminSecurity false
 
 # Get ports
-cat /usr/IBM/WAS855ND/profiles/WSASrv$myUserID/logs/AboutThisProfile.txt | grep SOAP
+cat /usr/IBM/WAS855ND/profiles/WSASrv01/logs/AboutThisProfile.txt | grep SOAP
 
 # Start tWAS
-/usr/IBM/WAS855ND/profiles/WSASrv$myUserID/bin/startServer.sh twasServer$myUserID
+/usr/IBM/WAS855ND/profiles/WSASrv01/bin/startServer.sh twasServer01
 
 # Configure tWAS for WSA
-cp /var/IBM/software/WAS/configuretWasUsageMetering.py /usr/IBM/WAS855ND/profiles/WSASrv$myUserID/bin
-cd /usr/IBM/WAS855ND/profiles/WSASrv$myUserID/bin
-./wsadmin.sh -lang jython -conntype SOAP -port 8881 -f configuretWasUsageMetering.py url=$(cat $myWorkingDir/WSA/WSA_metering_URL.txt) apiKey=$(cat $myWorkingDir/WSA/WSA_metering_api-key.txt) trustStorePassword=meterPwd
+cp /var/IBM/software/WAS/configuretWasUsageMetering.py /usr/IBM/WAS855ND/profiles/WSASrv01/bin
+cd /usr/IBM/WAS855ND/profiles/WSASrv01/bin
+./wsadmin.sh -lang jython -conntype SOAP -port 8881 -f configuretWasUsageMetering.py url=$(cat /var/IBM/temp/WSA/WSA_metering_URL.txt) apiKey=$(cat /var/IBM/temp/WSA/WSA_metering_api-key.txt) trustStorePassword=meterPwd
 
 # Restart tWAS
-/usr/IBM/WAS855ND/profiles/WSASrv$myUserID/bin/stopServer.sh twasServer$myUserID
-/usr/IBM/WAS855ND/profiles/WSASrv$myUserID/bin/startServer.sh twasServer$myUserID
+/usr/IBM/WAS855ND/profiles/WSASrv01/bin/stopServer.sh twasServer01
+/usr/IBM/WAS855ND/profiles/WSASrv01/bin/startServer.sh twasServer01
 
 
 # Configure a new feature for an updated application
-gedit $myWorkingDir/Liberty/wlp/usr/servers/libertyServer$myUserID/server.xml
+gedit /var/IBM/temp/Liberty/wlp/usr/servers/libertyServer01/server.xml
         <feature>jaxws-2.2</feature>
 
-cat $myWorkingDir/Liberty/wlp/usr/servers/libertyServer$myUserID/logs/messages.log
+cat /var/IBM/temp/Liberty/wlp/usr/servers/libertyServer01/logs/messages.log
 
 
 # Apply fix to Liberty
@@ -112,10 +109,10 @@ cat $myWorkingDir/Liberty/wlp/usr/servers/libertyServer$myUserID/logs/messages.l
 /usr/IBM/labs/WSA/wlp_applyFix.sh
 # Manually
 echo "Apply Fix"
-$myWorkingDir/Liberty/wlp/bin/server stop libertyServer$myUserID
+/var/IBM/temp/Liberty/wlp/bin/server stop libertyServer01
 echo "Apply iFix to resolve CVE"
-java -jar /var/IBM/software/WAS/210012-extended-archive-ifph42074.jar --installLocation $myWorkingDir/Liberty/wlp --suppressInfo
-$myWorkingDir/Liberty/wlp/bin/server start libertyServer$myUserID
+java -jar /var/IBM/software/WAS/210012-extended-archive-ifph42074.jar --installLocation /var/IBM/temp/Liberty/wlp --suppressInfo
+/var/IBM/temp/Liberty/wlp/bin/server start libertyServer01
 
 
 
@@ -126,14 +123,14 @@ $myWorkingDir/Liberty/wlp/bin/server start libertyServer$myUserID
 export fixID="8.5.5.5-WS-WAS-IFPH36923"
 export fixRepo="8.5.5.5-ws-was-ifph36923.zip"
 export WAS855ND_HOME="/usr/IBM/WAS855ND"
-export WAS855ND_PROFILE="$WAS855ND_HOME/profiles/WSASrv$myUserID"
+export WAS855ND_PROFILE="$WAS855ND_HOME/profiles/WSASrv01"
 export IMCL_HOME="/usr/IBM/IM/eclipse/tools"
 echo "Stop Server"
-$WAS855ND_PROFILE/bin/stopServer.sh twasServer$myUserID
+$WAS855ND_PROFILE/bin/stopServer.sh twasServer01
 echo "Apply Fix $fixID"
 $IMCL_HOME/imcl install $fixID -repositories /var/IBM/software/WAS/$fixRepo -installationDirectory $WAS855ND_HOME -log /var/IBM/temp/$fixID.log
 echo "Start Server"
-$WAS855ND_PROFILE/bin/startServer.sh twasServer$myUserID
+$WAS855ND_PROFILE/bin/startServer.sh twasServer01
 
 
 
@@ -142,14 +139,14 @@ $WAS855ND_PROFILE/bin/startServer.sh twasServer$myUserID
 /usr/IBM/labs/WSA/wlp_removeFix.sh
 # Manually
 # Stop Server
-$myWorkingDir/Liberty/wlp/bin/server stop libertyServer$myUserID
+/var/IBM/temp/Liberty/wlp/bin/server stop libertyServer01
 echo "Remove iFix"
-rm $myWorkingDir/Liberty/wlp/lib/com.ibm.ws.jaxws.common_1.0.59.cl211220211208-1644.jar
-# rm $myWorkingDir/Liberty/wlp/lib/com.ibm.ws.org.apache.myfaces.2.3_1.0.47.cl201220210331-1851.jar
-rm $myWorkingDir/Liberty/wlp/lib/fixes/210012-extended-archive-IFPH42074_21.0.0012.20220115_0043.xml
-rm $myWorkingDir/Liberty/wlp/lib/fixes/210012-extended-archive-IFPH42074_21.0.0012.20220115_0043.lpmf
+rm /var/IBM/temp/Liberty/wlp/lib/com.ibm.ws.jaxws.common_1.0.59.cl211220211208-1644.jar
+# rm /var/IBM/temp/Liberty/wlp/lib/com.ibm.ws.org.apache.myfaces.2.3_1.0.47.cl201220210331-1851.jar
+rm /var/IBM/temp/Liberty/wlp/lib/fixes/210012-extended-archive-IFPH42074_21.0.0012.20220115_0043.xml
+rm /var/IBM/temp/Liberty/wlp/lib/fixes/210012-extended-archive-IFPH42074_21.0.0012.20220115_0043.lpmf
 # Start Server
-$myWorkingDir/Liberty/wlp/bin/server start libertyServer$myUserID
+/var/IBM/temp/Liberty/wlp/bin/server start libertyServer01
 
 # Remove fix from tWAS
 # Via script:
@@ -158,14 +155,14 @@ $myWorkingDir/Liberty/wlp/bin/server start libertyServer$myUserID
 
 # Cleanup:
 # Stop servers
-$myWorkingDir/Liberty/wlp/bin/server stop libertyServer$myUserID
-/usr/IBM/WAS855ND/profiles/WSASrv$myUserID/bin/stopServer.sh twasServer$myUserID
+/var/IBM/temp/Liberty/wlp/bin/server stop libertyServer01
+/usr/IBM/WAS855ND/profiles/WSASrv01/bin/stopServer.sh twasServer01
 
 # Remove profiles
 cd ~
-rm -rf $myWorkingDir
-/usr/IBM/WAS855ND/bin/manageprofiles.sh -delete  -profileName WSASrv$myUserID
-rm -rf /usr/IBM/WAS855ND/profiles/WSASrv$myUserID
+rm -rf /var/IBM/temp
+/usr/IBM/WAS855ND/bin/manageprofiles.sh -delete  -profileName WSASrv01
+rm -rf /usr/IBM/WAS855ND/profiles/WSASrv01
 
 # Cleanup WSA console:
 # Change /etc/hosts
