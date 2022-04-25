@@ -133,14 +133,9 @@ $WAS855ND_PROFILE/bin/startServer.sh twasServer01
 
 
 # Remove fix from Liberty
-# Via script:
-/usr/IBM/labs/WSA/wlp_removeFix.sh
-# Manually
 # Stop Server
 /var/IBM/temp/Liberty/wlp/bin/server stop libertyServer01
-echo "Remove iFix"
 rm /var/IBM/temp/Liberty/wlp/lib/com.ibm.ws.jaxws.common_1.0.59.cl211220211208-1644.jar
-# rm /var/IBM/temp/Liberty/wlp/lib/com.ibm.ws.org.apache.myfaces.2.3_1.0.47.cl201220210331-1851.jar
 rm /var/IBM/temp/Liberty/wlp/lib/fixes/210012-extended-archive-IFPH42074_21.0.0012.20220115_0043.xml
 rm /var/IBM/temp/Liberty/wlp/lib/fixes/210012-extended-archive-IFPH42074_21.0.0012.20220115_0043.lpmf
 # Start Server
