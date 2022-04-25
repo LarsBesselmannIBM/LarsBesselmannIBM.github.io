@@ -3,7 +3,7 @@ If you want to copy it to your local system, use
 curl https://larsbesselmannibm.github.io/labs/WSA/lab_WSAcommands.txt > ~/Desktop/lab_WSAcommands.txt
 
 # Set the WSA endpoint to the IP address provided by the lab provider
-/usr/IBM/scripts/Backup/setWSA_IP.sh <IP-ADDRESS>
+/usr/IBM/scripts/Backup/setWSA_IP.sh 10.139.195.190
 
 # Set your UserID 
 export myUserID=<student number>
