@@ -108,12 +108,7 @@ cat /var/IBM/temp/Liberty/wlp/usr/servers/libertyServer01/logs/messages.log
 
 
 # Apply fix to Liberty
-# Via script:
-/usr/IBM/labs/WSA/wlp_applyFix.sh
-# Manually
-echo "Apply Fix"
 /var/IBM/temp/Liberty/wlp/bin/server stop libertyServer01
-echo "Apply iFix to resolve CVE"
 java -jar /var/IBM/software/WAS/210012-extended-archive-ifph42074.jar --installLocation /var/IBM/temp/Liberty/wlp --suppressInfo
 /var/IBM/temp/Liberty/wlp/bin/server start libertyServer01
 
