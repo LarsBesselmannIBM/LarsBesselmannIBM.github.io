@@ -2,9 +2,8 @@ The WSA commands are available at https://larsbesselmannibm.github.io/labs/WSA/l
 If you want to copy it to your local system, use 
 curl https://larsbesselmannibm.github.io/labs/WSA/lab_WSAcommands.txt > ~/Desktop/lab_WSAcommands.txt
 
-# Set the WSA endpoint to the IP address provided by the lab provider
-curl https://larsbesselmannibm.github.io/labs/WSA/setWSA_IP.sh > /usr/IBM/scripts/setWSA_IP.sh
-sudo sh /usr/IBM/scripts/setWSA_IP.sh
+# Set the WSA endpoint to the IP address provided by the lab provider (new address is 10.139.195.190)
+sudo sed -i 's/10.99.99.23/10.139.195.190/g' /etc/hosts
 
 # Set your UserID 
 export myUserID=<student number>
