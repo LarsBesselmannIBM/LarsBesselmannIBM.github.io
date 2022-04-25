@@ -10,7 +10,9 @@ cat /etc/hosts
 export myUserID=<student number>
 
 # Set the hostname for the Student VM
-/usr/IBM/scripts/Backup/setWSA_student.sh $myUserID
+export newHost="ibmdemo-was"$myUserID
+echo "192.168.1.100 $newHost" | sudo tee -a /etc/hosts
+sudo hostname $newHost
 
 # Accessing the WSA UI
 https://cp-console.apps.ocp46.tec.uk.ibm.com/oidc/login.jsp
@@ -47,7 +49,7 @@ keytool -import -trustcacerts -file WSA_metering_certificate_file.pem -keystore 
 # List all generated assets
 ls -lrt WSA_metering*
 
-#Install Liberty
+# Install Liberty
 mkdir /var/IBM/temp/Liberty
 cd /var/IBM/temp/Liberty
 java -jar /var/IBM/software/WAS/wlp-base-all-21.0.0.12.jar -acceptLicense //var/IBM/temp/Liberty
