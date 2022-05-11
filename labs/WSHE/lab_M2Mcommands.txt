@@ -157,6 +157,10 @@ docker network list
 
 # Build the defaultapplication-web (front-end) container
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/microservices/defaultapp-web
+gedit Dockerfile
+# Add the line:
+RUN dnf remove -y subscription-manager python3-subscription-manager-rhsm dnf-plugin-subscription-manager
+
 docker build -t defaultapp-web  . | tee web.out
 
 # Start the partition-web (front-end) docker container
@@ -165,6 +169,10 @@ docker ps
 
 # Build the defaultapplication-partition0 (back-end) container
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/microservices/defaultapp-partition0
+gedit Dockerfile
+# Add the line:
+RUN dnf remove -y subscription-manager python3-subscription-manager-rhsm dnf-plugin-subscription-manager
+
 docker build -t defaultapp-partition0 . | tee partition0.out
 
 # Start the partition-partition0 (back-end) docker container
