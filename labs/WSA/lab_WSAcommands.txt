@@ -114,9 +114,6 @@ java -jar /var/IBM/software/WAS/210012-extended-archive-ifph42074.jar --installL
 
 
 # Apply fix to tWAS
-# Via script:
-/usr/IBM/labs/WSA/was_applyFixes.sh
-# Manually
 export fixID="8.5.5.5-WS-WAS-IFPH36923"
 export fixRepo="8.5.5.5-ws-was-ifph36923.zip"
 export WAS855ND_HOME="/usr/IBM/WAS855ND"
@@ -141,8 +138,17 @@ rm /var/IBM/temp/Liberty/wlp/lib/fixes/210012-extended-archive-IFPH42074_21.0.00
 /var/IBM/temp/Liberty/wlp/bin/server start libertyServer01
 
 # Remove fix from tWAS
-# Via script:
-/usr/IBM/labs/WSA/was_removeFixes.sh
+export fixID="8.5.5.5-WS-WAS-IFPH36923"
+export fixRepo="8.5.5.5-ws-was-ifph36923.zip"
+export WAS855ND_HOME="/usr/IBM/WAS855ND"
+export WAS855ND_PROFILE="$WAS855ND_HOME/profiles/WSASrv01"
+export IMCL_HOME="/usr/IBM/IM/eclipse/tools"
+echo "Stop Server"
+$WAS855ND_PROFILE/bin/stopServer.sh twasServer01
+echo "Apply Fix $fixID"
+$IMCL_HOME/imcl uninstall $fixID -installationDirectory $WAS855ND_HOME -log /var/IBM/temp/$fixID.log
+echo "Start Server"
+$WAS855ND_PROFILE/bin/startServer.sh twasServer01
 
 
 # Cleanup:
