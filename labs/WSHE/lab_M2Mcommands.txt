@@ -165,7 +165,7 @@ docker build -t defaultapp-web  . | tee web.out
 
 # Start the partition-web (front-end) docker container
 docker run --name=defaultapp-web --hostname=defaultapp-web --network=defaultappNetwork -d -p 9095:9080 defaultapp-web:latest
-docker ps 
+docker ps | grep defaultapp
 
 # Build the defaultapplication-partition0 (back-end) container
 cd /var/IBM/temp/m2m-ws-sample/defaultapplication/microservices/defaultapp-partition0
@@ -177,7 +177,7 @@ docker build -t defaultapp-partition0 . | tee partition0.out
 
 # Start the partition-partition0 (back-end) docker container
 docker run --name=defaultapp-partition0 --hostname=defaultapp-partition0 --network=defaultappNetwork -d -p 9096:9080 defaultapp-partition0:latest
-docker ps
+docker ps | grep defaultapp
 
 # Inspect Docker’s defaultappNetwork and ensure both microservices are joined in the network
 docker inspect defaultappNetwork
