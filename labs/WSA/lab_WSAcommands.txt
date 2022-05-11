@@ -24,8 +24,7 @@ WSA credentials: admin/JnarVX84CKz3bAWWqrtjXHF4N3M3UwiW
 
 # Getting configuration Parameters
 
-# /usr/IBM/labs/WSA/retrieveWSADetails.sh
-echo "******** Retrieve WSA Details ********"
+# Retrieve WSA Details
 mkdir /var/IBM/temp/WSA
 cd /var/IBM/temp/WSA
 
