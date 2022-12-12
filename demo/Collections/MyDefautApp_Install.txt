@@ -1,0 +1,24 @@
+cd C:\myData\programs\WLP
+C:\myData\programs\WLP>set JAVA_HOME=c:\myData\programs\jdk8u352-b08-jre
+C:\myData\programs\WLP>set PATH=%PATH%;c:\myData\programs\jdk8u352-b08-jre\bin
+C:\myData\programs\WLP>java -jar C:\myData\Software\Liberty\wlp-base-all-22.0.0.6.jar
+cd wlp
+bin\server create propsServer
+mkdir -p usr\shared\config\lib\myprops
+copy cmblogconfig.properties  usr\shared\config\lib\myprops
+copy myDefaultApp.ear usr\servers\propsServer\apps
+
+Add to server.xml the lines:
+    <library id="myprops">
+       <folder dir="${shared.config.dir}/lib/myprops/" />
+    </library>
+    <enterpriseApplication id="myDefaultApp.ear" location="myDefaultApp.ear">
+       <classloader commonLibraryRef="myprops,global"> </classloader>
+    </enterpriseApplication>
+
+bin\server start propsServer
+
+URL: http://localhost:9080/MyDefaultApp/properties.jsp?bundleName=cmblogconfig&propertyName=log4j.appender.apiAppender.layout
+Result:
+Bundle cmblogconfig
+Property: log4j.appender.apiAppender.layout : org.apache.log4j.PatternLayout
